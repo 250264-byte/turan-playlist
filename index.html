@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101014">
+  <title>По дороге в Туран — плейлист</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <a class="brand" href="#">TURAN<span>FM</span></a>
+    <div class="top-note">CAMPUS COMMUTE RADIO <i></i> ALMATY, KZ</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="tag">PLAYLIST № 001 / EVERY MORNING</div>
+      <h1>ПО ДОРОГЕ<br><em>В ТУРАН.</em></h1>
+      <p class="lead">Музыка для дороги на пары, утреннего города и тех самых 15 минут до звонка.</p>
+      <div class="route"><span>ДОМ</span><b></b><span>ТУРАН</span><small>ALMATY • DAILY ROUTE</small></div>
+    </section>
+
+    <section class="player-card">
+      <div class="cover">
+        <div class="cover-label">SIDE A<br>COMMUTE MIX</div>
+        <div class="cover-title">TURAN<br>FM<span>001</span></div>
+        <div class="cover-bottom">SOUNDTRACK FOR THE WAY TO CLASS</div>
+      </div>
+      <div class="player-info">
+        <div class="section-kicker">NOW PLAYING</div>
+        <h2>Reverie</h2>
+        <p class="artist">IVOXYGEN</p>
+        <audio id="audio" preload="metadata">
+          <source src="reverie.mp3" type="audio/mpeg">
+        </audio>
+        <div class="progress-wrap">
+          <input id="seek" type="range" min="0" max="100" value="0" aria-label="Позиция трека">
+          <div class="times"><span id="current">0:00</span><span id="duration">0:00</span></div>
+        </div>
+        <div class="controls">
+          <button id="play" class="play" aria-label="Воспроизвести">▶</button>
+          <button id="restart" class="secondary" aria-label="С начала">↺</button>
+          <span class="playing-label" id="status">READY WHEN YOU ARE</span>
+        </div>
+        <p class="hint">Нажми ▶, чтобы включить музыку. Автозапуск может блокироваться браузером.</p>
+      </div>
+    </section>
+
+    <section class="tracklist">
+      <div class="list-heading"><div><div class="section-kicker">THE COMMUTE MIX</div><h2>ТВОЯ ДОРОГА, ТВОЙ САУНДТРЕК.</h2></div><span>01 TRACK</span></div>
+      <button class="track active" id="trackRow">
+        <span class="track-num">01</span><span class="track-name"><b>Reverie</b><small>IVOXYGEN</small></span><span class="track-kind">UPLOADED TRACK</span><span class="track-length">MP3</span>
+      </button>
+      <div class="list-foot">ONE TRACK TO START THE MORNING. MORE SOON.</div>
+    </section>
+
+    <footer><span>TURAN FM © 2026</span><span>MADE FOR THE WAY TO COLLEGE.</span><span>ALMATY, KAZAKHSTAN</span></footer>
+  </main>
+  <script>
+    const audio = document.getElementById('audio');
+    const play = document.getElementById('play');
+    const seek = document.getElementById('seek');
+    const current = document.getElementById('current');
+    const duration = document.getElementById('duration');
+    const status = document.getElementById('status');
+    const fmt = n => {
+      if (!Number.isFinite(n)) return '0:00';
+      const m = Math.floor(n / 60), s = Math.floor(n % 60);
+      return m + ':' + String(s).padStart(2, '0');
+    };
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play().then(() => {
+          play.textContent = 'Ⅱ'; status.textContent = 'NOW PLAYING';
+        }).catch(() => { status.textContent = 'PRESS PLAY TO START'; });
+      } else {
+        audio.pause(); play.textContent = '▶'; status.textContent = 'PAUSED';
+      }
+    }
+    play.addEventListener('click', togglePlay);
+    document.getElementById('trackRow').addEventListener('click', () => {
+      audio.currentTime = 0; audio.play().then(() => {
+        play.textContent = 'Ⅱ'; status.textContent = 'NOW PLAYING';
+      }).catch(() => { status.textContent = 'PRESS PLAY TO START'; });
+    });
+    document.getElementById('restart').addEventListener('click', () => { audio.currentTime = 0; if (audio.paused) togglePlay(); });
+    audio.addEventListener('loadedmetadata', () => duration.textContent = fmt(audio.duration));
+    audio.addEventListener('timeupdate', () => {
+      current.textContent = fmt(audio.currentTime);
+      seek.value = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    });
+    seek.addEventListener('input', () => {
+      if (audio.duration) audio.currentTime = (seek.value / 100) * audio.duration;
+    });
+    audio.addEventListener('ended', () => { play.textContent = '▶'; status.textContent = 'END OF MIX'; });
+  </script>
+</body>
+</html>
